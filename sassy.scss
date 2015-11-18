@@ -10,8 +10,9 @@ article{
     width: 100%;
     text-align: center;
   }
-  h2{
+  h3{
     text-align: center;
+    margin-top: 10px;
   }
 }
 .movies{
@@ -26,7 +27,8 @@ article{
 
 header{
   text-align: center;
-  background-color: gold;
+  //background-color: gold;
+  background: radial-gradient(yellow, gold);
   margin-bottom: 10px;
   h1{
     margin-top: 0;
@@ -38,9 +40,11 @@ header{
   background-color: red;
   color: white;
   width: 100%;
+  border: none;
 }
 .editMovie{
   background-color: blue;
   color: white;
   width:100%;
+  border: none;
 }

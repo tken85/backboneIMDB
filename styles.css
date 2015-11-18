@@ -8,8 +8,9 @@ article {
   article img {
     width: 100%;
     text-align: center; }
-  article h2 {
-    text-align: center; }
+  article h3 {
+    text-align: center;
+    margin-top: 10px; }
 
 .container {
   width: 60%; }
@@ -19,7 +20,7 @@ article {
 
 header {
   text-align: center;
-  background-color: gold;
+  background: radial-gradient(yellow, gold);
   margin-bottom: 10px; }
   header h1 {
     margin-top: 0;
@@ -28,9 +29,11 @@ header {
 .deleteMovie {
   background-color: red;
   color: white;
-  width: 100%; }
+  width: 100%;
+  border: none; }
 
 .editMovie {
   background-color: blue;
   color: white;
-  width: 100%; }
+  width: 100%;
+  border: none; }

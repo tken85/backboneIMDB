@@ -119,7 +119,7 @@ module.exports = Backbone.View.extend({
   editMovie: function(event){
     event.preventDefault();
     var edittedMovie = this.model;
-    $('.fixMovie').toggleClass('hidden');
+    this.$('.fixMovie').toggleClass('hidden');
     /*edittedMovie.set({release: 1999});
     edittedMovie.save();
     this.render();*/
@@ -127,11 +127,11 @@ module.exports = Backbone.View.extend({
   },
   fixMovie: function(event){
     event.preventDefault();
-    var name = $('input[name="edTitle"]').val();
-    var cover = $('input[name="edCover"]').val();
-    var synopsis = $('input[name="edPlot"]').val();
-    var releaseD = $('input[name="edRelease"]').val();
-    var rating5 = $('input[name="edRating"]').val();
+    var name = this.$('input[name="edTitle"]').val();
+    var cover = this.$('input[name="edCover"]').val();
+    var synopsis = this.$('input[name="edPlot"]').val();
+    var releaseD = this.$('input[name="edRelease"]').val();
+    var rating5 = this.$('input[name="edRating"]').val();
     var editedMovie = this.model;
     editedMovie.set({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
     $('.fixMovie').addClass('hidden');
