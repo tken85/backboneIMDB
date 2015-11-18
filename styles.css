@@ -49,3 +49,7 @@ header {
 
 .noLeft, .noEither {
   padding-left: 0; }
+
+.noMarg {
+  margin-left: 0;
+  margin-right: 0; }
