@@ -2,10 +2,57 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>IMDB for Beginners</title>
+    <title>IMDB for Me</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css" media="screen" title="no title" charset="utf-8">
+    <script type="html/template" id="movieTmpl">
+    <article data-index="<%= _id %>">
+      <h2><%= title %> &nbsp (<%= release %>)</h2>
+      <div class="row">
+        <div class="col-md-12"><img src="<%= cover_URL %>">
+        </div>
+      </div>
+      <div class="plot"><b>Synopsis:</b> <%= plot %></div>
+      <div class="rating"><b>Rating: </b><%= rating %>/5</div>
+      <form class="fixMovie hidden">
+        <input type="text" name="edTitle" value="<%= title %>">
+        <input type="text" name="edCover" value="<%= cover_URL %>">
+        <input type="text" name="edPlot" value="<%= plot %>">
+        <input type="text" name="edRelease" value="<%= release %>">
+        <input type="text" name="edRating" value="<%= rating %>">
+        <input type="submit" name="submit">
+      </form>
+      <button type="submit" class="deleteMovie" name="delete">Delete</button>
+      <button type="submit" class="editMovie" name="edit">Edit</button>
+    </article>
+    </script>
   </head>
   <body>
-
+    <header>
+      <h1>IMDBme</h1>
+    </header>
+    <div class="container">
+      <div id="movies">
+        <form id="newMovie" class="hidden">
+          <input type="text" name="title" class="new" placeholder="Movie Title">
+          <input type="text" name="cover" class="new" placeholder="Cover Photo URL">
+          <input type="text" name="plot" class="new" placeholder="Plot Synopsis">
+          <input type="text" name="release" class="new" placeholder="Release Date">
+          <input type="text" name="rating" class="new" placeholder="Rating out of 5">
+          <input type="submit" name="submit">
+        </form>
+        <button type"submit" class="showForm" name="button">Add Movie</button>
+        <!--<article>
+          <h2>Star Wars (1977)</h2>
+          <div class="row">
+            <div class="col-md-12"><img src="http://theartmad.com/wp-content/uploads/2015/07/Star-Wars-Episode-IV-%E2%80%93-A-New-Hope-Wallpaper-4.jpg">
+            </div>
+          </div>
+          <div class="plot"><b>Synopsis:</b> Farm Boy blows up space stations and receives prize</div>
+          <div class="rating"><b>Rating: </b>5/5</div>
+        </article> -->
+      </div>
+    </div>
     <script src="bundle.js" charset="utf-8"></script>
   </body>
 </html>

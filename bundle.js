@@ -6,66 +6,149 @@ var MovieCollectionView = require('./movieCollectionView');
 
 
 $(document).ready(function(){
+  var movies = new MovieCollection();
 
+  movies.fetch().then(function(data){
+    console.log("these are the movies: ", movies);
+    new MovieCollectionView({collection: movies});
+
+
+  });
 
 
 });
 
-},{"./movieCollection":2,"./movieCollectionView":3,"./movieModelView":4,"jquery":6}],2:[function(require,module,exports){
+},{"./movieCollection":2,"./movieCollectionView":3,"./movieModelView":5,"jquery":7}],2:[function(require,module,exports){
 var Backbone = require('backbone');
+var MovieModel = require('./movieModel');
 
 module.exports = Backbone.Collection.extend({
+  url: "http://tiny-tiny.herokuapp.com/collections/instaTerryIMDB",
+  model: MovieModel,
   config: function(){
 
   },
   initialize: function(){
-
-  },  
+    console.log(this);
+  },
 });
 
-},{"backbone":5}],3:[function(require,module,exports){
+},{"./movieModel":4,"backbone":6}],3:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
 Backbone.$ = $;
 var MovieView = require('./movieModelView');
+var MovieModel = require('./movieModel');
 
 module.exports = Backbone.View.extend({
-  el:"",
+  el:"#movies",
+  events: {
+    'click .showForm': 'formAppear',
+    'submit #newMovie': 'addMovie',
+  },
+  formAppear: function(event){
+    event.preventDefault();
+    $('#newMovie').toggleClass('hidden');
+  },
+  addMovie: function(event){
+    event.preventDefault();
+    var name = $('input[name="title"]').val();
+    var cover = $('input[name="cover"]').val();
+    var synopsis = $('input[name="plot"]').val();
+    var releaseD = $('input[name="release"]').val();
+    var rating5 = $('input[name="rating"]').val();
+    var that = this;
+    var newMovie = new MovieModel({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
+    newMovie.save().then(function(){that.addOne(newMovie);});
+    $('input[class="new"]').val("");
+  },
   initialize: function(){
-
+    this.addAll();
   },
   addOne: function(movieModel){
-
+    var movieView = new MovieView({model: movieModel});
+    this.$el.append(movieView.render().el);
   },
   addAll: function(){
-
+    _.each(this.collection.models, this.addOne, this);
   },
 });
 
-},{"./movieModelView":4,"backbone":5,"jquery":6,"underscore":7}],4:[function(require,module,exports){
+},{"./movieModel":4,"./movieModelView":5,"backbone":6,"jquery":7,"underscore":8}],4:[function(require,module,exports){
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+  urlRoot: "http://tiny-tiny.herokuapp.com/collections/instaTerryIMDB",
+  idAttribute: '_id',
+  defaults:{
+    title:"Movie",
+    cover_URL:"images/bam.png",
+    plot: "Stuff blows up good!",
+    release: "1985",
+    rating: 2,
+  },
+  initialize: function(){
+
+  }
+});
+
+},{"backbone":6,"underscore":8}],5:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
 Backbone.$ = $;
 
 
-module.exports = Backone.View.extend({
-  tagname:"",
+module.exports = Backbone.View.extend({
+  tagname:"article",
   className: "",
-  template: _.template(),
+  template: _.template($('#movieTmpl').html()),
   events:{
+    'click .deleteMovie': 'deleteMovie',
+    'click .editMovie' : 'editMovie',
+    'submit .fixMovie' : 'fixMovie'
+  },
+  deleteMovie: function(event){
+    event.preventDefault();
+    //this.$el.html("");
+    this.model.destroy();
+    this.$el.remove();
+  },
+  editMovie: function(event){
+    event.preventDefault();
+    var edittedMovie = this.model;
+    $('.fixMovie').toggleClass('hidden');
+    /*edittedMovie.set({release: 1999});
+    edittedMovie.save();
+    this.render();*/
 
   },
+  fixMovie: function(event){
+    event.preventDefault();
+    var name = $('input[name="edTitle"]').val();
+    var cover = $('input[name="edCover"]').val();
+    var synopsis = $('input[name="edPlot"]').val();
+    var releaseD = $('input[name="edRelease"]').val();
+    var rating5 = $('input[name="edRating"]').val();
+    var editedMovie = this.model;
+    editedMovie.set({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
+    $('.fixMovie').addClass('hidden');
+    editedMovie.save();
+    this.render();
+  },
   render: function(){
-
+    var markup = this.template(this.model.toJSON());
+    this.$el.html(markup);
+    return this;
   },
   initialize: function(){
 
   },
 });
 
-},{"backbone":5,"jquery":6,"underscore":7}],5:[function(require,module,exports){
+},{"backbone":6,"jquery":7,"underscore":8}],6:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -1963,7 +2046,7 @@ module.exports = Backone.View.extend({
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":6,"underscore":7}],6:[function(require,module,exports){
+},{"jquery":7,"underscore":8}],7:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -11175,7 +11258,7 @@ return jQuery;
 
 }));
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

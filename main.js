@@ -5,7 +5,14 @@ var MovieCollectionView = require('./movieCollectionView');
 
 
 $(document).ready(function(){
+  var movies = new MovieCollection();
 
+  movies.fetch().then(function(data){
+    console.log("these are the movies: ", movies);
+    new MovieCollectionView({collection: movies});
+
+
+  });
 
 
 });
