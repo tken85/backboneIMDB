@@ -86,7 +86,7 @@ module.exports = Backbone.View.extend({
     var newMovie = new MovieModel({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
     newMovie.save().then(function(){that.addOne(newMovie);});
     this.collection.unshift(newMovie);
-    $('input[class="new"]').val("");
+    $('input[class="new form-control"]').val("");
   },
   initialize: function(){
     this.addAll();
