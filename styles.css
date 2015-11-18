@@ -37,3 +37,6 @@ header {
   color: white;
   width: 100%;
   border: none; }
+
+.sortDate, .sortRating, .sortTitle {
+  width: 100%; }

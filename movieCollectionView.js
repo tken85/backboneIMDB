@@ -10,6 +10,30 @@ module.exports = Backbone.View.extend({
   events: {
     'click .showForm': 'formAppear',
     'submit #newMovie': 'addMovie',
+    'click .sortDate' : 'sortDate',
+    'click .sortRating' : 'sortRating',
+    'click .sortTitle' : 'sortTitle'
+  },
+  sortDate: function(event){
+    event.preventDefault();
+    this.collection.comparator = 'release';
+    this.collection.sort();
+    $('article').remove();
+    this.addAll();
+  },
+  sortRating: function(event){
+    event.preventDefault();
+    this.collection.comparator = 'rating';
+    this.collection.sort();
+    $('article').remove();
+    this.addAll();
+  },
+  sortTitle: function(event){
+    event.preventDefault();
+    this.collection.comparator = 'title';
+    this.collection.sort();
+    $('article').remove();
+    this.addAll();
   },
   formAppear: function(event){
     event.preventDefault();
