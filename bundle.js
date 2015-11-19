@@ -14,6 +14,7 @@ module.exports = Backbone.View.extend({
   className: "",
   template: _.template(tmpl.form),
   model: null,
+  movTemplate: _.template(tmpl.movieTmpl),
   events:{
     'click .showForm': 'onFormAppear',
     'submit #newMovie' : 'onAddMovie'
@@ -31,7 +32,12 @@ module.exports = Backbone.View.extend({
     var rating5 = $('input[name="rating"]').val();
     var that = this;
     $('input[class="new form-control"]').val("");
+    //var newMovie = {title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5};
     var newMovie = new MovieModel({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
+    /*var movieView = new MovieView({model: this.model});
+    this.model.set(newMovie);
+    this.model.save();
+    this.renderSubmitted();*/
     $('article').remove();
     this.collection.fetch().then(function(){
       that.collection.unshift(newMovie);
@@ -54,6 +60,12 @@ module.exports = Backbone.View.extend({
     this.$el.html(markup);
     return this;
   },
+  //the below is not used at this time. was being explored for faster loading
+  renderSubmitted: function(){
+    var markup = this.movTemplate(this.model.toJSON());
+    $('.content').prepend(markup);
+    return this;
+  }
 
 });
 
@@ -13034,7 +13046,7 @@ module.exports = {
     '<button type"submit" class="showForm" name="button">Add Movie</button>'
   ].join(""),
   movieTmpl: [
-    '<article data-index="<%= _id %>">',
+    '<article>',
       '<h3><%= title %> (<%= release %>)</h3>',
       '<div class="row">',
         '<div class="col-md-12"><img src="<%= cover_URL %>">',

@@ -14,7 +14,7 @@ module.exports = {
     '<button type"submit" class="showForm" name="button">Add Movie</button>'
   ].join(""),
   movieTmpl: [
-    '<article data-index="<%= _id %>">',
+    '<article>',
       '<h3><%= title %> (<%= release %>)</h3>',
       '<div class="row">',
         '<div class="col-md-12"><img src="<%= cover_URL %>">',
