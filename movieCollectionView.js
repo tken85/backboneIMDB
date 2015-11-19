@@ -6,13 +6,13 @@ var MovieView = require('./movieModelView');
 var MovieModel = require('./movieModel');
 
 module.exports = Backbone.View.extend({
-  el:"#movies",
+  el:".content",
   events: {
-    'click .showForm': 'formAppear',
+    /*'click .showForm': 'formAppear',
     'submit #newMovie': 'addMovie',
     'click .sortDate' : 'sortDate',
     'click .sortRating' : 'sortRating',
-    'click .sortTitle' : 'sortTitle'
+    'click .sortTitle' : 'sortTitle'*/
   },
   sortDate: function(event){
     event.preventDefault();

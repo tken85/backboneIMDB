@@ -1,24 +1,144 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var Backbone = require('backbone');
+var $ = require('jquery');
+Backbone.$ = $;
+var _ = require('underscore');
+var tmpl = require('./templates');
+var MovieModel = require('./movieModel');
+var MovieView = require('./movieModelView');
+var MovieCollection = require('./movieCollection');
+var MovieCollectionView = require('./movieCollectionView');
+
+
+module.exports = Backbone.View.extend({
+  className: "",
+  template: _.template(tmpl.form),
+  model: null,
+  events:{
+    'click .showForm': 'onFormAppear',
+    'submit #newMovie' : 'onAddMovie'
+  },
+  onFormAppear: function(event){
+    event.preventDefault();
+    $('#newMovie').toggleClass('hidden');
+  },
+  onAddMovie: function(event){
+    event.preventDefault();
+    var name = $('input[name="title"]').val();
+    var cover = $('input[name="cover"]').val();
+    var synopsis = $('input[name="plot"]').val();
+    var releaseD = $('input[name="release"]').val();
+    var rating5 = $('input[name="rating"]').val();
+    var that = this;
+    $('input[class="new form-control"]').val("");
+    var newMovie = new MovieModel({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
+    $('article').remove();
+    this.collection.fetch().then(function(){
+      that.collection.unshift(newMovie);
+      console.log("post unshift: ", that.collection);
+    });
+    newMovie.save().then(function(){
+      new MovieCollectionView({collection: that.collection});
+    });
+  },
+  initialize: function(){
+    if(!this.model){
+      this.model = new MovieModel();
+    }
+    if(!this.collection){
+      this.collection = new MovieCollection();
+    }
+  },
+  render: function(){
+    var markup = this.template(this.model.toJSON());
+    this.$el.html(markup);
+    return this;
+  },
+
+});
+
+},{"./movieCollection":5,"./movieCollectionView":6,"./movieModel":7,"./movieModelView":8,"./templates":13,"backbone":9,"jquery":10,"underscore":11}],2:[function(require,module,exports){
+var Backbone = require('backbone');
+var $ = require('jquery');
+Backbone.$ = $;
+var _ = require('underscore');
+var tmpl = require('./templates');
+
+
+module.exports = Backbone.View.extend({
+  template: _.template(tmpl.header),
+  initialize: function(){
+
+  },
+  render: function(){
+    var markup = this.template({});
+    this.$el.html(markup);
+    //in order to call .el off of render we need to return this
+    //bookViewInstance.render().el -yields all markup and data from model
+    return this;
+  },
+});
+
+},{"./templates":13,"backbone":9,"jquery":10,"underscore":11}],3:[function(require,module,exports){
+var Backbone = require('backbone');
+var $ = require('jquery');
+Backbone.$ = $;
+var _= require('underscore');
+var HeaderView = require('./headerView');
+var FormView = require('./formView');
+var SortView = require('./sortView');
+var MovieCollectionView = require('./movieCollectionView');
+var MovieCollection = require('./movieCollection');
+
+module.exports = Backbone.View.extend({
+  el: '#layoutView',
+  initialize: function(){
+    var self= this;
+    var headerHTML = new HeaderView();
+    var formHTML = new FormView();
+    var sortHTML = new SortView();
+    var movieCollection = new MovieCollection();
+    movieCollection.fetch().then(function(){
+      new MovieCollectionView({collection: movieCollection});
+
+      console.log("collection", movieCollection.toJSON());
+    //  self.$el.find('.content').html(moviesView);
+      console.log(self.$el.find('.content'));
+      self.$el.find('header').html(headerHTML.render().el);
+      self.$el.find('.form').html(formHTML.render().el);
+      self.$el.find('.sortButtons').html(sortHTML.render().el);
+
+    });
+
+
+
+  }
+
+
+});
+
+},{"./formView":1,"./headerView":2,"./movieCollection":5,"./movieCollectionView":6,"./sortView":12,"backbone":9,"jquery":10,"underscore":11}],4:[function(require,module,exports){
 var $ = require('jquery');
 var MovieCollection = require('./movieCollection');
 var MovieView = require('./movieModelView');
 var MovieCollectionView = require('./movieCollectionView');
+var LayoutView = require('./layoutView');
 
 
 $(document).ready(function(){
-  var movies = new MovieCollection();
+  /*var movies = new MovieCollection();
 
   movies.fetch().then(function(data){
     console.log("these are the movies: ", movies);
     new MovieCollectionView({collection: movies});
 
 
-  });
-
+  });*/
+  new LayoutView();
 
 });
 
-},{"./movieCollection":2,"./movieCollectionView":3,"./movieModelView":5,"jquery":7}],2:[function(require,module,exports){
+},{"./layoutView":3,"./movieCollection":5,"./movieCollectionView":6,"./movieModelView":8,"jquery":10}],5:[function(require,module,exports){
 var Backbone = require('backbone');
 var MovieModel = require('./movieModel');
 
@@ -29,11 +149,10 @@ module.exports = Backbone.Collection.extend({
 
   },
   initialize: function(){
-    console.log(this);
   },
 });
 
-},{"./movieModel":4,"backbone":6}],3:[function(require,module,exports){
+},{"./movieModel":7,"backbone":9}],6:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
@@ -42,13 +161,13 @@ var MovieView = require('./movieModelView');
 var MovieModel = require('./movieModel');
 
 module.exports = Backbone.View.extend({
-  el:"#movies",
+  el:".content",
   events: {
-    'click .showForm': 'formAppear',
+    /*'click .showForm': 'formAppear',
     'submit #newMovie': 'addMovie',
     'click .sortDate' : 'sortDate',
     'click .sortRating' : 'sortRating',
-    'click .sortTitle' : 'sortTitle'
+    'click .sortTitle' : 'sortTitle'*/
   },
   sortDate: function(event){
     event.preventDefault();
@@ -100,7 +219,7 @@ module.exports = Backbone.View.extend({
   },
 });
 
-},{"./movieModel":4,"./movieModelView":5,"backbone":6,"jquery":7,"underscore":8}],4:[function(require,module,exports){
+},{"./movieModel":7,"./movieModelView":8,"backbone":9,"jquery":10,"underscore":11}],7:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 
@@ -119,17 +238,19 @@ module.exports = Backbone.Model.extend({
   }
 });
 
-},{"backbone":6,"underscore":8}],5:[function(require,module,exports){
+},{"backbone":9,"underscore":11}],8:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
 Backbone.$ = $;
+var tmpl = require('./templates');
 
 
 module.exports = Backbone.View.extend({
   tagname:"article",
   className: "",
-  template: _.template($('#movieTmpl').html()),
+  //template: _.template($('#movieTmpl').html()),
+  template: _.template(tmpl.movieTmpl),
   events:{
     'click .deleteMovie': 'deleteMovie',
     'click .editMovie' : 'editMovie',
@@ -137,7 +258,6 @@ module.exports = Backbone.View.extend({
   },
   deleteMovie: function(event){
     event.preventDefault();
-    //this.$el.html("");
     this.model.destroy();
     this.$el.remove();
   },
@@ -145,9 +265,6 @@ module.exports = Backbone.View.extend({
     event.preventDefault();
     var edittedMovie = this.model;
     this.$('.fixMovie').toggleClass('hidden');
-    /*edittedMovie.set({release: 1999});
-    edittedMovie.save();
-    this.render();*/
 
   },
   fixMovie: function(event){
@@ -173,7 +290,7 @@ module.exports = Backbone.View.extend({
   },
 });
 
-},{"backbone":6,"jquery":7,"underscore":8}],6:[function(require,module,exports){
+},{"./templates":13,"backbone":9,"jquery":10,"underscore":11}],9:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -2071,7 +2188,7 @@ module.exports = Backbone.View.extend({
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":7,"underscore":8}],7:[function(require,module,exports){
+},{"jquery":10,"underscore":11}],10:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -11283,7 +11400,7 @@ return jQuery;
 
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -12833,4 +12950,119 @@ return jQuery;
   }
 }.call(this));
 
-},{}]},{},[1]);
+},{}],12:[function(require,module,exports){
+var Backbone = require('backbone');
+var $ = require('jquery');
+Backbone.$ = $;
+var _ = require('underscore');
+var tmpl = require('./templates');
+var MovieModel = require('./movieModel');
+var MovieView = require('./movieModelView');
+var MovieCollection = require('./movieCollection');
+var MovieCollectionView = require('./movieCollectionView');
+
+
+module.exports = Backbone.View.extend({
+  className: "",
+  template: _.template(tmpl.sorting),
+  model: null,
+  events:{
+    'click .sortDate' : 'onSortDate',
+    'click .sortRating' : 'onSortRating',
+    'click .sortTitle' : 'onSortTitle'
+  },
+  onSortDate: function(event){
+    event.preventDefault();
+    var that = this;
+    $('article').remove();
+    this.collection.fetch().then(function(){
+      that.collection.comparator='release';
+      that.collection.sort();
+      new MovieCollectionView({collection: that.collection});
+    });
+  },
+  onSortRating: function(event){
+    event.preventDefault();
+    var that = this;
+    $('article').remove();
+    this.collection.fetch().then(function(){
+      that.collection.comparator='rating';
+      that.collection.sort();
+      new MovieCollectionView({collection: that.collection});
+    });
+  },
+  onSortTitle: function(event){
+    event.preventDefault();
+    var that = this;
+    $('article').remove();
+    this.collection.fetch().then(function(){
+      that.collection.comparator='title';
+      that.collection.sort();
+      new MovieCollectionView({collection: that.collection});
+    });
+  },
+  initialize: function(){
+    if(!this.model){
+      this.model = new MovieModel();
+    }
+    if(!this.collection){
+      this.collection = new MovieCollection();
+    }
+  },
+  render: function(){
+    var markup = this.template(this.model.toJSON());
+    this.$el.html(markup);
+    return this;
+  },
+
+});
+
+},{"./movieCollection":5,"./movieCollectionView":6,"./movieModel":7,"./movieModelView":8,"./templates":13,"backbone":9,"jquery":10,"underscore":11}],13:[function(require,module,exports){
+module.exports = {
+  header: [
+    "<h1>IMDme</h1>"
+  ].join(""),
+  form: [
+    '<form id="newMovie" class="hidden">',
+      '<input type="text" name="title" class="new form-control" placeholder="Movie Title">',
+      '<input type="text" name="cover" class="new form-control" placeholder="Cover Photo URL">',
+      '<input type="text" name="plot" class="new form-control" placeholder="Plot Synopsis">',
+      '<input type="text" name="release" class="new form-control" placeholder="Release Date">',
+      '<input type="text" name="rating" class="new form-control" placeholder="Rating out of 5">',
+      '<input type="submit" class="form-control newMovButton" name="submit">',
+    '</form>',
+    '<button type"submit" class="showForm" name="button">Add Movie</button>'
+  ].join(""),
+  movieTmpl: [
+    '<article data-index="<%= _id %>">',
+      '<h3><%= title %> (<%= release %>)</h3>',
+      '<div class="row">',
+        '<div class="col-md-12"><img src="<%= cover_URL %>">',
+        '</div>',
+      '</div>',
+      '<div class="plot"><b>Synopsis:</b> <%= plot %></div>',
+      '<div class="rating"><b>Rating: </b><%= rating %>/5</div>',
+      '<form class="fixMovie hidden">',
+        '<input type="text" class="form-control" name="edTitle" value="<%= title %>">',
+        '<input type="text" class="form-control" name="edCover" value="<%= cover_URL %>">',
+        '<input type="text" class="form-control" name="edPlot" value="<%= plot %>">',
+        '<input type="text" class="form-control" name="edRelease" value="<%= release %>">',
+        '<input type="text" class="form-control" name="edRating" value="<%= rating %>">',
+        '<input type="submit" class="form-control" name="submit">',
+      '</form>',
+      '<button type="submit" class="deleteMovie" name="delete">Delete</button>',
+      '<button type="submit" class="editMovie" name="edit">Edit</button>',
+    '</article>'
+  ].join(""),
+  sorting: [
+    '<div class="row noMarg">',
+      '<div class="col-md-4 noEither"><button type="submit" class="sortDate" name="dateButton">By Date</button></div>',
+      '<div class="col-md-4 noEither"><button type="submit" class="sortRating" name="rateButton">By Rating</button></div>',
+      '<div class="col-md-4 noEither"><button type="submit" class="sortTitle" name="titleButton">By Title</button></div>',
+  '</div>'
+
+  ].join(""),
+
+};
+
+},{}]},{},[4]);

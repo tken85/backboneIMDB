@@ -5,7 +5,7 @@
     <title>IMDB for Me</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css" media="screen" title="no title" charset="utf-8">
-    <script type="html/template" id="movieTmpl">
+    <!--<script type="html/template" id="movieTmpl">
     <article data-index="<%= _id %>">
       <h3><%= title %> (<%= release %>)</h3>
       <div class="row">
@@ -25,10 +25,18 @@
       <button type="submit" class="deleteMovie" name="delete">Delete</button>
       <button type="submit" class="editMovie" name="edit">Edit</button>
     </article>
-    </script>
+  </script> -->
   </head>
   <body>
-    <header>
+    <div id="layoutView">
+      <header></header>
+      <div class="container">
+        <section class="form"></section>
+        <section class="sortButtons"></section>
+        <section class="content"></section>
+      </div>
+    </div>
+    <!--<header>
       <h1>IMDme</h1>
     </header>
     <div class="container">
@@ -48,17 +56,8 @@
         <div class="col-md-4 noEither"><button type="submit" class="sortTitle" name="titleButton">By Title</button></div>
       </div>
 
-        <!--<article>
-          <h2>Star Wars (1977)</h2>
-          <div class="row">
-            <div class="col-md-12"><img src="http://theartmad.com/wp-content/uploads/2015/07/Star-Wars-Episode-IV-%E2%80%93-A-New-Hope-Wallpaper-4.jpg">
-            </div>
-          </div>
-          <div class="plot"><b>Synopsis:</b> Farm Boy blows up space stations and receives prize</div>
-          <div class="rating"><b>Rating: </b>5/5</div>
-        </article> -->
       </div>
-    </div>
+    </div> -->
     <script src="bundle.js" charset="utf-8"></script>
   </body>
 </html>

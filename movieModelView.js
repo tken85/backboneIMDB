@@ -2,12 +2,14 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
 Backbone.$ = $;
+var tmpl = require('./templates');
 
 
 module.exports = Backbone.View.extend({
   tagname:"article",
   className: "",
-  template: _.template($('#movieTmpl').html()),
+  //template: _.template($('#movieTmpl').html()),
+  template: _.template(tmpl.movieTmpl),
   events:{
     'click .deleteMovie': 'deleteMovie',
     'click .editMovie' : 'editMovie',
@@ -15,7 +17,6 @@ module.exports = Backbone.View.extend({
   },
   deleteMovie: function(event){
     event.preventDefault();
-    //this.$el.html("");
     this.model.destroy();
     this.$el.remove();
   },
@@ -23,9 +24,6 @@ module.exports = Backbone.View.extend({
     event.preventDefault();
     var edittedMovie = this.model;
     this.$('.fixMovie').toggleClass('hidden');
-    /*edittedMovie.set({release: 1999});
-    edittedMovie.save();
-    this.render();*/
 
   },
   fixMovie: function(event){
