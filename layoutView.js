@@ -13,14 +13,12 @@ module.exports = Backbone.View.extend({
   initialize: function(){
     var self= this;
     var headerHTML = new HeaderView();
-    var formHTML = new FormView();
     var sortHTML = new SortView();
     var movieCollection = new MovieCollection();
     movieCollection.fetch().then(function(){
-      new MovieCollectionView({collection: movieCollection});
-
+      var movieCollectionView = new MovieCollectionView({collection: movieCollection});
+      var formHTML = new FormView({collection: movieCollection});
       console.log("collection", movieCollection.toJSON());
-    //  self.$el.find('.content').html(moviesView);
       console.log(self.$el.find('.content'));
       self.$el.find('header').html(headerHTML.render().el);
       self.$el.find('.form').html(formHTML.render().el);

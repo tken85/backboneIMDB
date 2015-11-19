@@ -9,12 +9,14 @@ module.exports = Backbone.View.extend({
   el:".content",
   initialize: function(){
     this.addAll();
+    this.listenTo(this.collection, 'add', this.addAll);
   },
   addOne: function(movieModel){
     var movieView = new MovieView({model: movieModel});
     this.$el.append(movieView.render().el);
   },
   addAll: function(){
+    $('.content').html("");
     _.each(this.collection.models, this.addOne, this);
   },
 });

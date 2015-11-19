@@ -6,7 +6,7 @@ var tmpl = require('./templates');
 var MovieModel = require('./movieModel');
 var MovieView = require('./movieModelView');
 var MovieCollection = require('./movieCollection');
-var MovieCollectionView = require('./movieCollectionView');
+//var MovieCollectionView = require('./movieCollectionView');
 
 
 module.exports = Backbone.View.extend({
@@ -31,19 +31,9 @@ module.exports = Backbone.View.extend({
     var rating5 = $('input[name="rating"]').val();
     var that = this;
     $('input[class="new form-control"]').val("");
-    //var newMovie = {title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5};
     var newMovie = new MovieModel({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
-    /*var movieView = new MovieView({model: this.model});
-    this.model.set(newMovie);
-    this.model.save();
-    this.renderSubmitted();*/
-    $('article').remove();
-    this.collection.fetch().then(function(){
-      that.collection.unshift(newMovie);
-      console.log("post unshift: ", that.collection);
-    });
     newMovie.save().then(function(){
-      new MovieCollectionView({collection: that.collection});
+      that.collection.add(newMovie);
     });
   },
   initialize: function(){
@@ -53,6 +43,7 @@ module.exports = Backbone.View.extend({
     if(!this.collection){
       this.collection = new MovieCollection();
     }
+    console.log("form collect: ", this.collection);
   },
   render: function(){
     var markup = this.template(this.model.toJSON());

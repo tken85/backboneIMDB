@@ -7,7 +7,7 @@ var tmpl = require('./templates');
 var MovieModel = require('./movieModel');
 var MovieView = require('./movieModelView');
 var MovieCollection = require('./movieCollection');
-var MovieCollectionView = require('./movieCollectionView');
+//var MovieCollectionView = require('./movieCollectionView');
 
 
 module.exports = Backbone.View.extend({
@@ -32,19 +32,9 @@ module.exports = Backbone.View.extend({
     var rating5 = $('input[name="rating"]').val();
     var that = this;
     $('input[class="new form-control"]').val("");
-    //var newMovie = {title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5};
     var newMovie = new MovieModel({title: name, cover_URL: cover, plot: synopsis, release: releaseD, rating: rating5});
-    /*var movieView = new MovieView({model: this.model});
-    this.model.set(newMovie);
-    this.model.save();
-    this.renderSubmitted();*/
-    $('article').remove();
-    this.collection.fetch().then(function(){
-      that.collection.unshift(newMovie);
-      console.log("post unshift: ", that.collection);
-    });
     newMovie.save().then(function(){
-      new MovieCollectionView({collection: that.collection});
+      that.collection.add(newMovie);
     });
   },
   initialize: function(){
@@ -54,6 +44,7 @@ module.exports = Backbone.View.extend({
     if(!this.collection){
       this.collection = new MovieCollection();
     }
+    console.log("form collect: ", this.collection);
   },
   render: function(){
     var markup = this.template(this.model.toJSON());
@@ -69,7 +60,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"./movieCollection":5,"./movieCollectionView":6,"./movieModel":7,"./movieModelView":8,"./templates":13,"backbone":9,"jquery":10,"underscore":11}],2:[function(require,module,exports){
+},{"./movieCollection":5,"./movieModel":7,"./movieModelView":8,"./templates":13,"backbone":9,"jquery":10,"underscore":11}],2:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery');
 Backbone.$ = $;
@@ -107,14 +98,12 @@ module.exports = Backbone.View.extend({
   initialize: function(){
     var self= this;
     var headerHTML = new HeaderView();
-    var formHTML = new FormView();
     var sortHTML = new SortView();
     var movieCollection = new MovieCollection();
     movieCollection.fetch().then(function(){
-      new MovieCollectionView({collection: movieCollection});
-
+      var movieCollectionView = new MovieCollectionView({collection: movieCollection});
+      var formHTML = new FormView({collection: movieCollection});
       console.log("collection", movieCollection.toJSON());
-    //  self.$el.find('.content').html(moviesView);
       console.log(self.$el.find('.content'));
       self.$el.find('header').html(headerHTML.render().el);
       self.$el.find('.form').html(formHTML.render().el);
@@ -176,12 +165,14 @@ module.exports = Backbone.View.extend({
   el:".content",
   initialize: function(){
     this.addAll();
+    this.listenTo(this.collection, 'add', this.addAll);
   },
   addOne: function(movieModel){
     var movieView = new MovieView({model: movieModel});
     this.$el.append(movieView.render().el);
   },
   addAll: function(){
+    $('.content').html("");
     _.each(this.collection.models, this.addOne, this);
   },
 });
